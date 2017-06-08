@@ -16,10 +16,10 @@ class LineBotsController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          docomoru_res = docomo_clients(event.message['text'])
+          docomoru_res = docomo_clients(event.message['text'], t: 20)
           message = {
             type: 'text',
-            text: docomoru_res.utt
+            text: docomoru_res.body["utt"]
           }
           client.reply_message(event['replyToken'], message)
         end
@@ -37,8 +37,8 @@ class LineBotsController < ApplicationController
       }
     end
 
-    def docomo_clients(sendmsg)
+    def docomo_clients(sendmsg, params={})
       client = Docomoru::Client.new(api_key: ENV["DOCOMO_API_KEY"])
-      client.create_dialogue(sendmsg)
+      client.create_dialogue(sendmsg, params)
     end
 end
